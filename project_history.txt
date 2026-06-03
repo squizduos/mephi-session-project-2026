@@ -1,0 +1,83 @@
+    1   sudo dnf -y update
+    2  nmcli connection show
+    3  nmcli con mod eth0 ipv4.method manual ipv4.addresses 192.168.1.100/24 ipv4.gateway 192.168.1.1 ipv4.dns 8.8.8.8 connection.autoconnect yes
+    4  nmcli con down eth0
+    5  nmcli con up eth0
+    6  ip a
+    7  ip r
+    8  hostnamectl set-hostname mephi-2026.domain.local
+    9  hostnamectl status
+   10  ip r
+   11  ping -c 4 8.8.8.8 > /tmp/network_check.txt
+   12  cat /tmp/network_check.txt 
+   13  ping -c 4 192.168.1.1 > /tmp/network_check.txt
+   14  cat /tmp/network_check.txt 
+   15  ip a
+   16  ip r
+   17  ping 8.8.8.8
+   18  ip a
+   19  ip r
+   20  ping -c 4 192.168.1.1
+   21  ping -c 4 192.168.1.100
+   22  ip link show eth0
+   23  nmcli dev status
+   24  ping -c 4 192.168.1.100
+   25  ping -c 4 192.168.1.1
+   26  ping -c 4 8.8.8.8
+   27  ping -c 4 8.8.8.8 > /tmp/network_check.txt
+   28  ping -c 4 192.168.1.1 >> /tmp/network_check.txt
+   29  dnf -y install nginx tcpdump libcap-ng-utils git
+   30   nginx -v
+   31  tcpdump --version
+   32  getcap -h
+   33  cd /tmp
+   34  dnf download tcpdump
+   35  ls -la .
+   36  rpm -Uvh tcpdump-4.99.6-2.fc43.x86_64.rpm 
+   37  lsblk
+   38  fdisk /dev/sdb
+   39  lsblk
+   40  mkfs.ext4 -L MEPHI_DATA /dev/sdb1
+   41  mkdir -p /data/mephi-web
+   42  blkid /dev/sdb1
+   43  echo 'LABEL=MEPHI_DATA  /data/mephi-web  ext4  defaults  0  2' >> /etc/fstab
+   44  mount -a
+   45  mount | grep mephi
+   46  ls -ld /data/mephi-web
+   47  systemctl enable --now nginx
+   48  systemctl status nginx
+   49  journalctl -u nginx --since "5 minutes ago" > /tmp/nginx_recent_logs.txt
+   50  cat /tmp/nginx_recent_logs.txt 
+   51  groupadd mephi-devs
+   52  useradd -m -G mephi-devs mephi-admin
+   53  echo 'P@ssw0rd2026' | passwd --stdin mephi-admin
+   54  chown -R mephi-admin:mephi-devs /data/mephi-web
+   55  chmod 2775 /data/mephi-web
+   56  stat /data/mephi-web
+   57  getenforce
+   58  nano /etc/nginx/nginx.conf
+   59  nginx -t
+   60  systemctl restart nginx
+   61  systemctl status nginx
+   62  semanage fcontext -a -t httpd_sys_content_t "/data/mephi-web(/.*)?"
+   63  restorecon -Rv /data/mephi-web
+   64  ls -Zd /data/mephi-web/
+   65  which tcpdump
+   66  ls -l /usr/sbin/tcpdump
+   67  chmod u-s /usr/sbin/tcpdump
+   68  setcap cap_net_raw,cap_net_admin+ep /usr/sbin/tcpdump
+   69  getcap /usr/sbin/tcpdump
+   70  sudo -u mephi-admin tcpdump --help
+   71  echo "root" > /etc/ssh/denied_users
+   72  chmod 644 /etc/ssh/denied_users 
+   73  nano /etc/pam.d/sshd 
+   74  nano /etc/pam.d/login 
+   75  nano /etc/ssh/sshd_config
+   76  systemctl restart sshd
+   77  su - mephi-admin
+   78  firewall-cmd --list-services
+   79  firewall-cmd --add-service=http --permanent
+   80  firewall-cmd --reload
+   81  su - mephi-admin
+   82  cd /data/mephi-web/
+   83  history > project_history.txt
